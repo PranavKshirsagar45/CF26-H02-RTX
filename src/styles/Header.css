@@ -1,0 +1,354 @@
+/* =========================================================
+   HEADER
+========================================================= */
+
+.top-header {
+  width: 100%;
+  min-height: 72px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 18px 28px;
+
+  background: #f8f8fc;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.header-search {
+  width: 330px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 0 14px;
+
+  background: #ffffff;
+
+  border: 1px solid #dedee8;
+  border-radius: 10px;
+
+  color: #686c7e;
+
+  transition: 0.2s ease;
+
+  box-sizing: border-box;
+}
+
+.header-search:focus-within {
+  border-color: #9b70df;
+
+  box-shadow:
+    0 0 0 3px rgba(113, 53, 221, 0.08);
+}
+
+.header-search svg {
+  flex-shrink: 0;
+}
+
+.header-search input {
+  width: 100%;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  color: #242941;
+
+  font-size: 12px;
+}
+
+.header-search input::placeholder {
+  color: #85899a;
+}
+
+/* =========================================================
+   HEADER RIGHT
+========================================================= */
+
+.header-right {
+  display: flex;
+  align-items: center;
+
+  gap: 16px;
+}
+
+/* =========================================================
+   NOTIFICATION BUTTON
+========================================================= */
+
+.header-icon-button {
+  position: relative;
+
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: transparent;
+
+  color: #34384c;
+
+  transition: 0.2s ease;
+}
+
+.header-icon-button:hover {
+  background: #f0eaff;
+  color: #7135dd;
+}
+
+.notification-dot {
+  position: absolute;
+
+  top: 7px;
+  right: 7px;
+
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #e65368;
+
+  border: 2px solid #f8f8fc;
+}
+
+/* =========================================================
+   AUTH ACTIONS
+========================================================= */
+
+.auth-actions {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+}
+
+/* =========================================================
+   LOGIN BUTTON
+========================================================= */
+
+.header-login {
+  height: 39px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 0 14px;
+
+  border: 1px solid #d9c9f5;
+
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #6330c7;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  transition: 0.2s ease;
+}
+
+.header-login:hover {
+  background: #f5f0ff;
+
+  border-color: #b99ae9;
+
+  transform: translateY(-1px);
+}
+
+.header-login svg {
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   REGISTER BUTTON
+========================================================= */
+
+.header-register {
+  height: 39px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 0 15px;
+
+  border-radius: 8px;
+
+  background: linear-gradient(
+    90deg,
+    #7135dd,
+    #6530d2
+  );
+
+  color: #ffffff;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  box-shadow:
+    0 5px 14px rgba(109, 53, 217, 0.18);
+
+  transition: 0.2s ease;
+}
+
+.header-register:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 8px 18px rgba(109, 53, 217, 0.25);
+}
+
+.header-register svg {
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   LOGGED-IN USER
+========================================================= */
+
+.header-user {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+}
+
+.header-avatar {
+  width: 39px;
+  height: 39px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: linear-gradient(
+    135deg,
+    #bca4ef,
+    #7353b7
+  );
+
+  color: #ffffff;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.header-user-info strong {
+  display: block;
+
+  color: #242941;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.header-user-info span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #777b8d;
+
+  font-size: 10px;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+
+  .top-header {
+    padding: 16px 22px;
+  }
+
+  .header-search {
+    width: 280px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .top-header {
+    flex-wrap: wrap;
+
+    padding: 15px 18px;
+  }
+
+  .header-search {
+    width: 100%;
+    order: 1;
+  }
+
+  .header-right {
+    width: 100%;
+
+    justify-content: flex-end;
+
+    order: 2;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 450px) {
+
+  .top-header {
+    padding: 14px 15px;
+  }
+
+  .header-right {
+    gap: 8px;
+  }
+
+  .header-login,
+  .header-register {
+    height: 37px;
+
+    padding: 0 11px;
+
+    font-size: 11px;
+  }
+
+  .header-user-info {
+    display: none;
+  }
+
+  .header-icon-button {
+    width: 37px;
+    height: 37px;
+  }
+}

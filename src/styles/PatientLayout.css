@@ -1,0 +1,108 @@
+/* =========================================================
+   PATIENT LAYOUT
+   ========================================================= */
+
+.patient-layout {
+  min-height: 100vh;
+  width: 100%;
+  background: #f8f8fc;
+}
+
+/* =========================================================
+   MAIN AREA
+   ========================================================= */
+
+.patient-main {
+  margin-left: 234px;
+  width: calc(100% - 234px);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================================================
+   PAGE CONTENT
+   ========================================================= */
+
+.patient-content {
+  width: 100%;
+  flex: 1;
+  padding: 26px 28px 35px;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   IMPORTANT
+   Remove old sidebar spacing from pages
+   ========================================================= */
+
+.patient-content .page-content,
+.patient-content .simple-page {
+  margin-left: 0;
+  width: 100%;
+  min-height: auto;
+  padding: 0;
+}
+
+/* =========================================================
+   COMMON BOX SIZING
+   ========================================================= */
+
+.patient-content *,
+.patient-main *,
+.sidebar * {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   PREVENT HORIZONTAL OVERFLOW
+   ========================================================= */
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* =========================================================
+   LARGE SCREEN
+   ========================================================= */
+
+@media (min-width: 1400px) {
+  .patient-content {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .patient-main {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .patient-content {
+    padding: 24px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 650px) {
+  .patient-content {
+    padding: 18px 15px 25px;
+  }
+}
