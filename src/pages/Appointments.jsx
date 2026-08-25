@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import {
   CalendarDays,
   Clock3,
@@ -8,50 +10,83 @@ import {
   MoreVertical,
 } from "lucide-react";
 
-const appointments = [
-  {
-    id: 1,
-    doctor: "Dr. Priya Mehta",
-    specialty: "Cardiologist",
-    date: "24 May 2024",
-    time: "10:30 AM",
-    location: "OPD - 3",
-    type: "In-person",
-    status: "Confirmed",
-    initials: "PM",
-  },
-  {
-    id: 2,
-    doctor: "Dr. Arjun Patel",
-    specialty: "General Physician",
-    date: "28 May 2024",
-    time: "02:00 PM",
-    location: "OPD - 1",
-    type: "In-person",
-    status: "Confirmed",
-    initials: "AP",
-  },
-  {
-    id: 3,
-    doctor: "Dr. Neha Kapoor",
-    specialty: "Dermatologist",
-    date: "02 June 2024",
-    time: "11:15 AM",
-    location: "Online",
-    type: "Video Consultation",
-    status: "Pending",
-    initials: "NK",
-  },
-];
+import {
+  getMyAppointments,
+  cancelAppointment,
+} from "../services/appointmentService";
 
 function Appointments() {
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    loadAppointments();
+  }, []);
+
+  const loadAppointments = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const data = await getMyAppointments();
+
+      setAppointments(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Failed to load appointments:", err);
+
+      setError(
+        err.response?.data?.message ||
+          "Unable to load appointments."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancel = async (id) => {
+    const confirmCancel = window.confirm(
+      "Are you sure you want to cancel this appointment?"
+    );
+
+    if (!confirmCancel) return;
+
+    try {
+      await cancelAppointment(id);
+
+      await loadAppointments();
+    } catch (err) {
+      console.error("Cancel appointment failed:", err);
+
+      alert(
+        err.response?.data?.message ||
+          "Unable to cancel appointment."
+      );
+    }
+  };
+
+  const upcomingCount = appointments.filter(
+    (appointment) =>
+      appointment.status?.toLowerCase() === "confirmed" ||
+      appointment.status?.toLowerCase() === "pending"
+  ).length;
+
+  const completedCount = appointments.filter(
+    (appointment) =>
+      appointment.status?.toLowerCase() === "completed"
+  ).length;
+
+  const pendingCount = appointments.filter(
+    (appointment) =>
+      appointment.status?.toLowerCase() === "pending"
+  ).length;
+
   return (
     <div className="simple-page">
 
       {/* ================= HEADER ================= */}
 
       <div className="page-header">
-
         <div>
           <h1>Appointments</h1>
 
@@ -70,7 +105,6 @@ function Appointments() {
           <Plus size={16} />
           Book Appointment
         </button>
-
       </div>
 
       {/* ================= SUMMARY ================= */}
@@ -87,7 +121,7 @@ function Appointments() {
               <span>Upcoming</span>
 
               <div className="stat-number">
-                <strong>3</strong>
+                <strong>{upcomingCount}</strong>
               </div>
             </div>
           </div>
@@ -103,7 +137,7 @@ function Appointments() {
               <span>Completed</span>
 
               <div className="stat-number">
-                <strong>9</strong>
+                <strong>{completedCount}</strong>
               </div>
             </div>
           </div>
@@ -119,7 +153,7 @@ function Appointments() {
               <span>Pending</span>
 
               <div className="stat-number">
-                <strong>1</strong>
+                <strong>{pendingCount}</strong>
               </div>
             </div>
           </div>
@@ -127,14 +161,17 @@ function Appointments() {
 
       </div>
 
-      {/* ================= APPOINTMENT LIST ================= */}
+      {/* ================= APPOINTMENTS ================= */}
 
       <div className="page-section">
 
         <div className="section-heading">
           <div>
             <h2>Upcoming Appointments</h2>
-            <p>Your scheduled doctor visits.</p>
+
+            <p>
+              Your scheduled doctor visits.
+            </p>
           </div>
 
           <button
@@ -145,88 +182,181 @@ function Appointments() {
           </button>
         </div>
 
-        <div className="appointments-list">
+        {/* Loading */}
 
-          {appointments.map((appointment) => (
+        {loading && (
+          <div className="appointment-loading">
+            Loading appointments...
+          </div>
+        )}
 
-            <div
-              className="appointment-page-card"
-              key={appointment.id}
+        {/* Error */}
+
+        {!loading && error && (
+          <div className="appointment-error">
+            <p>{error}</p>
+
+            <button
+              type="button"
+              className="primary-btn"
+              onClick={loadAppointments}
             >
+              Retry
+            </button>
+          </div>
+        )}
 
-              {/* Doctor Avatar */}
+        {/* Empty */}
 
-              <div className="doctor-avatar">
-                {appointment.initials}
-              </div>
+        {!loading &&
+          !error &&
+          appointments.length === 0 && (
+            <div className="appointment-empty">
+              <CalendarDays size={40} />
 
-              {/* Doctor Info */}
+              <h3>No appointments found</h3>
 
-              <div className="appointment-doctor-info">
+              <p>
+                You don't have any appointments yet.
+              </p>
+            </div>
+          )}
 
-                <h3>
-                  {appointment.doctor}
-                </h3>
+        {/* Appointment List */}
 
-                <p>
-                  {appointment.specialty}
-                </p>
+        {!loading &&
+          !error &&
+          appointments.length > 0 && (
+            <div className="appointments-list">
 
-                <div className="appointment-meta">
+              {appointments.map((appointment) => {
 
-                  <span>
-                    <CalendarDays size={14} />
-                    {appointment.date}
-                  </span>
+                const doctorName =
+                  appointment.doctor ||
+                  appointment.doctorName ||
+                  "Doctor";
 
-                  <span>
-                    <Clock3 size={14} />
-                    {appointment.time}
-                  </span>
+                const specialty =
+                  appointment.specialty ||
+                  appointment.doctorSpecialty ||
+                  "Specialist";
 
-                  <span>
-                    {appointment.type === "Video Consultation" ? (
-                      <Video size={14} />
-                    ) : (
-                      <MapPin size={14} />
-                    )}
+                const date =
+                  appointment.date ||
+                  appointment.appointmentDate ||
+                  "Date not available";
 
-                    {appointment.location}
-                  </span>
+                const time =
+                  appointment.time ||
+                  appointment.appointmentTime ||
+                  "Time not available";
 
-                </div>
+                const location =
+                  appointment.location ||
+                  appointment.room ||
+                  "Hospital";
 
-              </div>
+                const type =
+                  appointment.type ||
+                  "In-person";
 
-              {/* Status */}
+                const status =
+                  appointment.status ||
+                  "Pending";
 
-              <div
-                className={`appointment-status ${
-                  appointment.status.toLowerCase()
-                }`}
-              >
-                {appointment.status}
-              </div>
+                const initials = doctorName
+                  .replace("Dr. ", "")
+                  .split(" ")
+                  .map((name) => name[0])
+                  .join("")
+                  .substring(0, 2)
+                  .toUpperCase();
 
-              {/* Actions */}
+                return (
+                  <div
+                    className="appointment-page-card"
+                    key={appointment.id}
+                  >
 
-              <button
-                type="button"
-                className="appointment-more"
-                aria-label="Appointment options"
-              >
-                <MoreVertical size={18} />
-              </button>
+                    {/* Doctor Avatar */}
+
+                    <div className="doctor-avatar">
+                      {initials}
+                    </div>
+
+                    {/* Doctor Info */}
+
+                    <div className="appointment-doctor-info">
+
+                      <h3>
+                        {doctorName}
+                      </h3>
+
+                      <p>
+                        {specialty}
+                      </p>
+
+                      <div className="appointment-meta">
+
+                        <span>
+                          <CalendarDays size={14} />
+                          {date}
+                        </span>
+
+                        <span>
+                          <Clock3 size={14} />
+                          {time}
+                        </span>
+
+                        <span>
+                          {type === "Video Consultation" ? (
+                            <Video size={14} />
+                          ) : (
+                            <MapPin size={14} />
+                          )}
+
+                          {location}
+                        </span>
+
+                      </div>
+                    </div>
+
+                    {/* Status */}
+
+                    <div
+                      className={`appointment-status ${status.toLowerCase()}`}
+                    >
+                      {status}
+                    </div>
+
+                    {/* Actions */}
+
+                    <button
+                      type="button"
+                      className="appointment-more"
+                      aria-label="Appointment options"
+                      onClick={() => {
+                        if (
+                          status.toLowerCase() !==
+                          "cancelled"
+                        ) {
+                          handleCancel(appointment.id);
+                        }
+                      }}
+                    >
+                      <MoreVertical size={18} />
+                    </button>
+
+                  </div>
+                );
+              })}
 
             </div>
-
-          ))}
-
-        </div>
+          )}
 
       </div>
 
-      {/* ================= EMPTY / INFO CARD ================= */}
+      {/* ================= INFO CARD ================= */}
 
       <div className="appointment-info-card">
 
@@ -235,11 +365,14 @@ function Appointments() {
         </div>
 
         <div>
-          <h3>Need a new appointment?</h3>
+          <h3>
+            Need a new appointment?
+          </h3>
 
           <p>
-            Book a consultation with one of our specialists
-            and take the next step toward better health.
+            Book a consultation with one of our
+            specialists and take the next step
+            toward better health.
           </p>
         </div>
 
